@@ -44,7 +44,7 @@ function check_environment_variable {
 function check_tarballs {
   LIST_OF_TARBALLS="
   syslinux-6.03.tar.xz
-  systemd-boot_10-Dec-2017.tar.xz
+  systemd-boot_26-May-2018.tar.xz
   "
 
   for tarball in $LIST_OF_TARBALLS ; do
@@ -85,9 +85,9 @@ step "[2/4] Create Ramdisk Image"
 mv -v $IMAGES_DIR/rootfs.gz $IMAGES_DIR/isoimage/boot/rootfs.xz
 
 step "[3/4] Create UEFI Image"
-extract $SOURCES_DIR/systemd-boot_10-Dec-2017.tar.xz $BUILD_DIR
+extract $SOURCES_DIR/systemd-boot_26-May-2018.tar.xz $BUILD_DIR
 mkdir -pv $IMAGES_DIR/uefi/EFI/BOOT
-cp -v $BUILD_DIR/systemd-boot_10-Dec-2017/uefi_root/EFI/BOOT/BOOTx64.EFI $IMAGES_DIR/uefi/EFI/BOOT
+cp -v $BUILD_DIR/systemd-boot_26-May-2018/uefi_root/EFI/BOOT/BOOTx64.EFI $IMAGES_DIR/uefi/EFI/BOOT
 mkdir -pv $IMAGES_DIR/uefi/loader/entries
 cat > $IMAGES_DIR/uefi/loader/entries/qnas-x86_64.conf << EOF
 title QNAS installer
