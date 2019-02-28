@@ -27,7 +27,7 @@ clean:
 	@rm -rf out
 
 flash:
-	@sudo python2 $(SCRIPTS_DIR)/image-usb-stick $(IMAGES_DIR)/sdcard.img && sudo -k
+	@sudo python2 $(SCRIPTS_DIR)/image-usb-stick $(IMAGES_DIR)/$(CONFIG_ISO_FILENAME) && sudo -k
 
 download:
 	@wget -c -i wget-list -P $(SOURCES_DIR)
