@@ -9,7 +9,7 @@ Debian 9 is recommended.
 #### **Debian 9**
 
 ```bash
-$ sudo apt install ca-certificates xz-utils make gcc g++ wget git
+$ sudo apt install ca-certificates xz-utils make gcc g++ wget git bison flex libelf-dev libssl-dev xorriso qemu-system python-minimal
 ```
 
 ### Get QNAS Source code

@@ -93,7 +93,6 @@ cat > $IMAGES_DIR/uefi/loader/entries/qnas-x86_64.conf << EOF
 title QNAS installer
 version x86_64
 efi /qnas/x86_64/kernel.xz
-options initrd=/qnas/x86_64/rootfs.xz
 EOF
 cat > $IMAGES_DIR/uefi/loader/loader.conf << EOF
 default qnas-x86_64
@@ -115,7 +114,7 @@ mkdir -p $IMAGES_DIR/isoimage/EFI/BOOT
 cat > $IMAGES_DIR/isoimage/EFI/BOOT/startup.nsh << EOF
 echo -off
 echo QNAS installer is starting.
-\boot\kernel.xz initrd=\boot\rootfs.xz
+\boot\kernel.xz
 EOF
 extract $SOURCES_DIR/syslinux-6.03.tar.xz $BUILD_DIR
 install -Dv -m 0644 $BUILD_DIR/syslinux-6.03/bios/core/isolinux.bin $IMAGES_DIR/isoimage/boot/syslinux/isolinux.bin

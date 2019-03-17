@@ -79,9 +79,15 @@ check_environment_variable
 check_tarballs
 total_build_time=$(timer)
 
-step "[1/1] Linux Kernel 4.20.12"
 rm -rf $BUILD_DIR $IMAGES_DIR
-mkdir -pv $BUILD_DIR $IMAGES_DIR
+mkdir -pv $BUILD_DIR $IMAGES_DIR/isoimage/boot
+
+step "[1/2] Create Ramdisk Image"
+( cd $ROOTFS_DIR && find . | cpio -o -H newc | gzip > $IMAGES_DIR/initramfs_data.cpio.gz )
+( cd $ROOTFS_DIR && find . | cpio -R root:root -H newc -o | gzip > $IMAGES_DIR/rootfs.gz )
+mv -v $IMAGES_DIR/rootfs.gz $IMAGES_DIR/isoimage/boot/rootfs.xz
+
+step "[2/2] Linux Kernel 4.20.12"
 extract $SOURCES_DIR/linux-4.20.12.tar.xz $BUILD_DIR
 make -j$PARALLEL_JOBS ARCH=$CONFIG_LINUX_ARCH mrproper -C $BUILD_DIR/linux-4.20.12
 make -j$PARALLEL_JOBS ARCH=$CONFIG_LINUX_ARCH $CONFIG_LINUX_KERNEL_DEFCONFIG -C $BUILD_DIR/linux-4.20.12
@@ -109,6 +115,10 @@ echo "CONFIG_RESET_ATTACK_MITIGATION=y" >> $BUILD_DIR/linux-4.20.12/.config
 echo "CONFIG_APPLE_PROPERTIES=n" >> $BUILD_DIR/linux-4.20.12/.config
 # Enable the mixed EFI mode when building 64-bit kernel.
 echo "CONFIG_EFI_MIXED=y" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_DEFAULT_HOSTNAME=\"QNAS\"" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_INITRAMFS_SOURCE=\"$IMAGES_DIR/initramfs_data.cpio.gz\"" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_INITRAMFS_ROOT_UID=0" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_INITRAMFS_ROOT_GID=0" >> $BUILD_DIR/linux-4.20.12/.config
 make -j$PARALLEL_JOBS ARCH=$CONFIG_LINUX_ARCH CROSS_COMPILE="$TOOLS_DIR/bin/$CONFIG_TARGET-" -C $BUILD_DIR/linux-4.20.12 bzImage
 cp $BUILD_DIR/linux-4.20.12/arch/x86/boot/bzImage $IMAGES_DIR/bzImage
 rm -rf $BUILD_DIR/linux-4.20.12
