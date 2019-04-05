@@ -100,12 +100,12 @@ check_environment_variable
 check_tarballs
 total_build_time=$(timer)
 
-step "[1/12] Create toolchain directory."
+step "[1/13] Create toolchain directory."
 rm -rf $BUILD_DIR $TOOLS_DIR
 mkdir -pv $BUILD_DIR $TOOLS_DIR
 ln -svf . $TOOLS_DIR/usr
 
-step "[2/12] Create the sysroot directory"
+step "[2/13] Create the sysroot directory"
 mkdir -pv $SYSROOT_DIR
 ln -svf . $SYSROOT_DIR/usr
 if [[ "$CONFIG_LINUX_ARCH" = "i386" ]] ; then
@@ -115,14 +115,14 @@ if [[ "$CONFIG_LINUX_ARCH" = "x86_64" ]] ; then
   ln -snvf lib $SYSROOT_DIR/lib64
 fi
 
-step "[3/12] Linux 4.20.12 API Headers"
+step "[3/13] Linux 4.20.12 API Headers"
 extract $SOURCES_DIR/linux-4.20.12.tar.xz $BUILD_DIR
 make -j$PARALLEL_JOBS ARCH=$CONFIG_LINUX_ARCH mrproper -C $BUILD_DIR/linux-4.20.12
 make -j$PARALLEL_JOBS ARCH=$CONFIG_LINUX_ARCH headers_check -C $BUILD_DIR/linux-4.20.12
 make -j$PARALLEL_JOBS ARCH=$CONFIG_LINUX_ARCH INSTALL_HDR_PATH=$SYSROOT_DIR headers_install -C $BUILD_DIR/linux-4.20.12
 rm -rf $BUILD_DIR/linux-4.20.12
 
-step "[4/12] Binutils 2.29.1"
+step "[4/13] Binutils 2.29.1"
 extract $SOURCES_DIR/binutils-2.32.tar.xz $BUILD_DIR
 mkdir -pv $BUILD_DIR/binutils-2.32/binutils-build
 ( cd $BUILD_DIR/binutils-2.32/binutils-build && \
@@ -137,7 +137,7 @@ make -j$PARALLEL_JOBS -C $BUILD_DIR/binutils-2.32/binutils-build
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/binutils-2.32/binutils-build
 rm -rf $BUILD_DIR/binutils-2.32
 
-step "[5/12] Gcc 8.3.0 - Static"
+step "[5/13] Gcc 8.3.0 - Static"
 tar -Jxf $SOURCES_DIR/gcc-8.3.0.tar.xz -C $BUILD_DIR
 extract $SOURCES_DIR/gmp-6.1.2.tar.xz $BUILD_DIR/gcc-8.3.0
 mv -v $BUILD_DIR/gcc-8.3.0/gmp-6.1.2 $BUILD_DIR/gcc-8.3.0/gmp
@@ -173,7 +173,7 @@ make -j$PARALLEL_JOBS all-gcc all-target-libgcc -C $BUILD_DIR/gcc-8.3.0/gcc-buil
 make -j$PARALLEL_JOBS install-gcc install-target-libgcc -C $BUILD_DIR/gcc-8.3.0/gcc-build
 rm -rf $BUILD_DIR/gcc-8.3.0
 
-step "[6/12] Musl 1.1.21"
+step "[6/13] Musl 1.1.21"
 extract $SOURCES_DIR/musl-1.1.21.tar.gz $BUILD_DIR
 ( cd $BUILD_DIR/musl-1.1.21 && \
   ./configure \
@@ -184,7 +184,7 @@ make -j$PARALLEL_JOBS -C $BUILD_DIR/musl-1.1.21
 DESTDIR=$SYSROOT_DIR make -j$PARALLEL_JOBS install -C $BUILD_DIR/musl-1.1.21
 rm -rf $BUILD_DIR/musl-1.1.21
 
-step "[7/12] Gcc 8.3.0 - Final"
+step "[7/13] Gcc 8.3.0 - Final"
 tar -Jxf $SOURCES_DIR/gcc-8.3.0.tar.xz -C $BUILD_DIR
 extract $SOURCES_DIR/gmp-6.1.2.tar.xz $BUILD_DIR/gcc-8.3.0
 mv -v $BUILD_DIR/gcc-8.3.0/gmp-6.1.2 $BUILD_DIR/gcc-8.3.0/gmp
@@ -216,7 +216,7 @@ if [ ! -e $TOOLS_DIR/bin/$CONFIG_TARGET-cc ]; then
 fi
 rm -rf $BUILD_DIR/gcc-8.3.0
 
-step "[8/12] Pkg-config 0.29.2"
+step "[8/13] Pkg-config 0.29.2"
 extract $SOURCES_DIR/pkg-config-0.29.2.tar.gz $BUILD_DIR
 ( cd $BUILD_DIR/pkg-config-0.29.2 && \
 ./configure \
@@ -227,7 +227,7 @@ make -j$PARALLEL_JOBS -C $BUILD_DIR/pkg-config-0.29.2
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/pkg-config-0.29.2
 rm -rf $BUILD_DIR/pkg-config-0.29.2
 
-step "[9/12] Dosfstools 4.1"
+step "[9/13] Dosfstools 4.1"
 extract $SOURCES_DIR/dosfstools-4.1.tar.xz $BUILD_DIR
 ( cd $BUILD_DIR/dosfstools-4.1 && \
 ./configure \
@@ -239,7 +239,7 @@ make -j$PARALLEL_JOBS -C $BUILD_DIR/dosfstools-4.1
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/dosfstools-4.1
 rm -rf $BUILD_DIR/dosfstools-4.1
 
-step "[10/12] Mtools 4.0.21"
+step "[10/13] Mtools 4.0.21"
 extract $SOURCES_DIR/mtools-4.0.21.tar.bz2 $BUILD_DIR
 ( cd $BUILD_DIR/mtools-4.0.21 && \
 ./configure \
@@ -250,7 +250,7 @@ make -j$PARALLEL_JOBS -C $BUILD_DIR/mtools-4.0.21
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/mtools-4.0.21
 rm -rf $BUILD_DIR/mtools-4.0.21
 
-step "[11/12] libconfuse 3.2.2"
+step "[11/13] libconfuse 3.2.2"
 extract $SOURCES_DIR/confuse-3.2.2.tar.xz $BUILD_DIR
 ( cd $BUILD_DIR/confuse-3.2.2 && \
 ./configure \
@@ -261,7 +261,7 @@ make -j$PARALLEL_JOBS -C $BUILD_DIR/confuse-3.2.2
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/confuse-3.2.2
 rm -rf $BUILD_DIR/confuse-3.2.2
 
-step "[12/12] Genimage 10"
+step "[12/13] Genimage 10"
 extract $SOURCES_DIR/genimage-10.tar.xz $BUILD_DIR
 ( cd $BUILD_DIR/genimage-10 && \
 ./configure \
@@ -271,6 +271,28 @@ extract $SOURCES_DIR/genimage-10.tar.xz $BUILD_DIR
 make -j$PARALLEL_JOBS -C $BUILD_DIR/genimage-10
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/genimage-10
 rm -rf $BUILD_DIR/genimage-10
+
+step "[13/13] Grub 2.02"
+extract $SOURCES_DIR/grub-2.02.tar.xz $BUILD_DIR
+( cd $BUILD_DIR/grub-2.02 && \
+CPP="gcc -E" \
+./configure \
+--prefix=$TOOLS_DIR \
+--disable-static \
+--enable-shared \
+--target=x86_64 \
+--with-platform=efi \
+--disable-grub-mkfont \
+--enable-efiemu=no \
+ac_cv_lib_lzma_lzma_code=no \
+--enable-device-mapper=no \
+--enable-libzfs=no \
+--disable-werror )
+make -j$PARALLEL_JOBS -C $BUILD_DIR/grub-2.02
+make -j$PARALLEL_JOBS install -C $BUILD_DIR/grub-2.02
+mkdir -pv $TOOLS_DIR/prebuilts/efi
+$TOOLS_DIR/bin/grub-mkimage -d $BUILD_DIR/grub-2.02/grub-core -O x86_64-efi -o $TOOLS_DIR/prebuilts/efi/bootx64.efi -p "/EFI/BOOT"  boot linux ext2 fat squash4 part_msdos part_gpt normal efi_gop
+rm -rf $BUILD_DIR/grub-2.02
 
 do_strip
 
