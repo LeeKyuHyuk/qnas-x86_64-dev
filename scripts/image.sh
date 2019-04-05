@@ -59,7 +59,7 @@ function timer {
 check_environment_variable
 total_build_time=$(timer)
 
-rm -rf $BUILD_DIR $IMAGES_DIR/{uefi,boot.vfat,sdcard.img}
+rm -rf $BUILD_DIR $IMAGES_DIR/{uefi,boot.vfat,sdcard.img,$CONFIG_ISO_FILENAME}
 mkdir -pv $BUILD_DIR
 
 step "[1/1] Create QNAS UEFI Image"
@@ -69,14 +69,13 @@ cat > $IMAGES_DIR/uefi/EFI/BOOT/grub.cfg << EOF
 set default="0"
 set timeout="5"
 
-menuentry "Buildroot" {
+menuentry "QNAS 1.0.0 Absinthe (x86_64)" {
 	linux /bzImage
 }
 EOF
 cat > $IMAGES_DIR/uefi/startup.nsh << EOF
 bootx64.efi
 EOF
-mkdir -pv $IMAGES_DIR/uefi/qnas/x86_64
 cp -v $IMAGES_DIR/bzImage $IMAGES_DIR/uefi/bzImage
 $TOOLS_DIR/usr/bin/genimage \
   --rootpath "$ROOTFS_DIR" \
@@ -84,5 +83,7 @@ $TOOLS_DIR/usr/bin/genimage \
   --inputpath "$IMAGES_DIR/uefi" \
   --outputpath "$IMAGES_DIR" \
   --config "$SUPPORT_DIR/genimage/qnas-uefi.cfg"
+
+mv $IMAGES_DIR/sdcard.img $IMAGES_DIR/$CONFIG_ISO_FILENAME
 
 success "\nTotal QNAS install image generate time: $(timer $total_build_time)\n"
