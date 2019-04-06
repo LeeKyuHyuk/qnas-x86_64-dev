@@ -121,7 +121,7 @@ echo "CONFIG_INITRAMFS_SOURCE=\"$IMAGES_DIR/initramfs_data.cpio.gz\"" >> $BUILD_
 echo "CONFIG_INITRAMFS_ROOT_UID=0" >> $BUILD_DIR/linux-4.20.12/.config
 echo "CONFIG_INITRAMFS_ROOT_GID=0" >> $BUILD_DIR/linux-4.20.12/.config
 make -j$PARALLEL_JOBS ARCH=$CONFIG_LINUX_ARCH CROSS_COMPILE="$TOOLS_DIR/bin/$CONFIG_TARGET-" -C $BUILD_DIR/linux-4.20.12 bzImage
-cp $BUILD_DIR/linux-4.20.12/arch/x86/boot/bzImage $IMAGES_DIR/bzImage
+cp $BUILD_DIR/linux-4.20.12/arch/x86/boot/bzImage $IMAGES_DIR/bzImage-live
 rm -rf $BUILD_DIR/linux-4.20.12
 
 success "\nTotal kernel build time: $(timer $total_build_time)\n"
