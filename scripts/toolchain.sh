@@ -126,12 +126,12 @@ step "[4/13] Binutils 2.29.1"
 extract $SOURCES_DIR/binutils-2.32.tar.xz $BUILD_DIR
 mkdir -pv $BUILD_DIR/binutils-2.32/binutils-build
 ( cd $BUILD_DIR/binutils-2.32/binutils-build && \
-$BUILD_DIR/binutils-2.32/configure \
---prefix=$TOOLS_DIR \
---target=$CONFIG_TARGET \
---with-sysroot=$SYSROOT_DIR \
---disable-nls \
---disable-multilib )
+    $BUILD_DIR/binutils-2.32/configure \
+    --prefix=$TOOLS_DIR \
+    --target=$CONFIG_TARGET \
+    --disable-multilib \
+    --disable-nls \
+    --with-sysroot=$SYSROOT_DIR )
 make -j$PARALLEL_JOBS configure-host -C $BUILD_DIR/binutils-2.32/binutils-build
 make -j$PARALLEL_JOBS -C $BUILD_DIR/binutils-2.32/binutils-build
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/binutils-2.32/binutils-build
@@ -147,28 +147,28 @@ extract $SOURCES_DIR/mpc-1.1.0.tar.gz $BUILD_DIR/gcc-8.3.0
 mv -v $BUILD_DIR/gcc-8.3.0/mpc-1.1.0 $BUILD_DIR/gcc-8.3.0/mpc
 mkdir -pv $BUILD_DIR/gcc-8.3.0/gcc-build
 ( cd $BUILD_DIR/gcc-8.3.0/gcc-build && \
-  $BUILD_DIR/gcc-8.3.0/configure \
-  --prefix=$TOOLS_DIR \
-  --build=$CONFIG_HOST \
-  --host=$CONFIG_HOST \
-  --target=$CONFIG_TARGET \
-  --with-sysroot=$SYSROOT_DIR \
-  --disable-nls  \
-  --disable-shared \
-  --without-headers \
-  --with-newlib \
-  --disable-decimal-float \
-  --disable-libgomp \
-  --disable-libmudflap \
-  --disable-libssp \
-  --disable-libatomic \
-  --disable-libquadmath \
-  --disable-threads \
-  --enable-languages=c \
-  --disable-multilib \
-  --with-arch="x86-64" \
-  --with-pkgversion="$CONFIG_PKG_VERSION" \
-  --with-bugurl="$CONFIG_BUG_URL" )
+    $BUILD_DIR/gcc-8.3.0/configure \
+    --prefix=$TOOLS_DIR \
+    --build=$CONFIG_HOST \
+    --host=$CONFIG_HOST \
+    --target=$CONFIG_TARGET \
+    --disable-decimal-float \
+    --disable-libatomic \
+    --disable-libgomp \
+    --disable-libmudflap \
+    --disable-libquadmath \
+    --disable-libssp \
+    --disable-multilib \
+    --disable-nls  \
+    --disable-shared \
+    --disable-threads \
+    --enable-languages=c \
+    --with-arch="x86-64" \
+    --with-bugurl="$CONFIG_BUG_URL" \
+    --with-newlib \
+    --with-pkgversion="$CONFIG_PKG_VERSION" \
+    --with-sysroot=$SYSROOT_DIR \
+    --without-headers )
 make -j$PARALLEL_JOBS all-gcc all-target-libgcc -C $BUILD_DIR/gcc-8.3.0/gcc-build
 make -j$PARALLEL_JOBS install-gcc install-target-libgcc -C $BUILD_DIR/gcc-8.3.0/gcc-build
 rm -rf $BUILD_DIR/gcc-8.3.0
@@ -176,10 +176,10 @@ rm -rf $BUILD_DIR/gcc-8.3.0
 step "[6/13] Musl 1.1.21"
 extract $SOURCES_DIR/musl-1.1.21.tar.gz $BUILD_DIR
 ( cd $BUILD_DIR/musl-1.1.21 && \
-  ./configure \
-  CROSS_COMPILE="$TOOLS_DIR/bin/$CONFIG_TARGET-" \
-  --prefix=/ \
-  --target=$CONFIG_TARGET )
+    ./configure \
+    CROSS_COMPILE="$TOOLS_DIR/bin/$CONFIG_TARGET-" \
+    --prefix=/ \
+    --target=$CONFIG_TARGET )
 make -j$PARALLEL_JOBS -C $BUILD_DIR/musl-1.1.21
 DESTDIR=$SYSROOT_DIR make -j$PARALLEL_JOBS install -C $BUILD_DIR/musl-1.1.21
 rm -rf $BUILD_DIR/musl-1.1.21
@@ -194,21 +194,21 @@ extract $SOURCES_DIR/mpc-1.1.0.tar.gz $BUILD_DIR/gcc-8.3.0
 mv -v $BUILD_DIR/gcc-8.3.0/mpc-1.1.0 $BUILD_DIR/gcc-8.3.0/mpc
 mkdir -v $BUILD_DIR/gcc-8.3.0/gcc-build
 ( cd $BUILD_DIR/gcc-8.3.0/gcc-build && \
-  $BUILD_DIR/gcc-8.3.0/configure \
-  --prefix=$TOOLS_DIR \
-  --build=$CONFIG_HOST \
-  --host=$CONFIG_HOST \
-  --target=$CONFIG_TARGET \
-  --with-sysroot=$SYSROOT_DIR \
-  --disable-nls \
-  --enable-languages=c \
-  --enable-c99 \
-  --enable-long-long \
-  --disable-libmudflap \
-  --disable-multilib \
-  --with-arch="x86-64" \
-  --with-pkgversion="$CONFIG_PKG_VERSION" \
-  --with-bugurl="$CONFIG_BUG_URL" )
+    $BUILD_DIR/gcc-8.3.0/configure \
+    --prefix=$TOOLS_DIR \
+    --build=$CONFIG_HOST \
+    --host=$CONFIG_HOST \
+    --target=$CONFIG_TARGET \
+    --disable-libmudflap \
+    --disable-multilib \
+    --disable-nls \
+    --enable-c99 \
+    --enable-languages=c \
+    --enable-long-long \
+    --with-arch="x86-64" \
+    --with-bugurl="$CONFIG_BUG_URL" \
+    --with-pkgversion="$CONFIG_PKG_VERSION" \
+    --with-sysroot=$SYSROOT_DIR )
 make -j$PARALLEL_JOBS -C $BUILD_DIR/gcc-8.3.0/gcc-build
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/gcc-8.3.0/gcc-build
 if [ ! -e $TOOLS_DIR/bin/$CONFIG_TARGET-cc ]; then
@@ -219,10 +219,10 @@ rm -rf $BUILD_DIR/gcc-8.3.0
 step "[8/13] Pkg-config 0.29.2"
 extract $SOURCES_DIR/pkg-config-0.29.2.tar.gz $BUILD_DIR
 ( cd $BUILD_DIR/pkg-config-0.29.2 && \
-./configure \
---prefix=$TOOLS_DIR \
---with-internal-glib \
---disable-host-tool )
+    ./configure \
+    --prefix=$TOOLS_DIR \
+    --disable-host-tool \
+    --with-internal-glib )
 make -j$PARALLEL_JOBS -C $BUILD_DIR/pkg-config-0.29.2
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/pkg-config-0.29.2
 rm -rf $BUILD_DIR/pkg-config-0.29.2
@@ -230,11 +230,11 @@ rm -rf $BUILD_DIR/pkg-config-0.29.2
 step "[9/13] Dosfstools 4.1"
 extract $SOURCES_DIR/dosfstools-4.1.tar.xz $BUILD_DIR
 ( cd $BUILD_DIR/dosfstools-4.1 && \
-./configure \
---prefix=$TOOLS_DIR \
---enable-shared \
---disable-static \
---enable-compat-symlinks )
+    ./configure \
+    --prefix=$TOOLS_DIR \
+    --disable-static \
+    --enable-compat-symlinks \
+    --enable-shared )
 make -j$PARALLEL_JOBS -C $BUILD_DIR/dosfstools-4.1
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/dosfstools-4.1
 rm -rf $BUILD_DIR/dosfstools-4.1
@@ -242,10 +242,10 @@ rm -rf $BUILD_DIR/dosfstools-4.1
 step "[10/13] Mtools 4.0.21"
 extract $SOURCES_DIR/mtools-4.0.21.tar.bz2 $BUILD_DIR
 ( cd $BUILD_DIR/mtools-4.0.21 && \
-./configure \
---prefix=$TOOLS_DIR \
---enable-shared \
---disable-static )
+    ./configure \
+    --prefix=$TOOLS_DIR \
+    --disable-static \
+    --enable-shared )
 make -j$PARALLEL_JOBS -C $BUILD_DIR/mtools-4.0.21
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/mtools-4.0.21
 rm -rf $BUILD_DIR/mtools-4.0.21
@@ -253,10 +253,10 @@ rm -rf $BUILD_DIR/mtools-4.0.21
 step "[11/13] libconfuse 3.2.2"
 extract $SOURCES_DIR/confuse-3.2.2.tar.xz $BUILD_DIR
 ( cd $BUILD_DIR/confuse-3.2.2 && \
-./configure \
---prefix=$TOOLS_DIR \
---enable-shared \
---disable-static )
+    ./configure \
+    --prefix=$TOOLS_DIR \
+    --disable-static \
+    --enable-shared )
 make -j$PARALLEL_JOBS -C $BUILD_DIR/confuse-3.2.2
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/confuse-3.2.2
 rm -rf $BUILD_DIR/confuse-3.2.2
@@ -264,10 +264,10 @@ rm -rf $BUILD_DIR/confuse-3.2.2
 step "[12/13] Genimage 10"
 extract $SOURCES_DIR/genimage-10.tar.xz $BUILD_DIR
 ( cd $BUILD_DIR/genimage-10 && \
-./configure \
---prefix=$TOOLS_DIR \
---enable-shared \
---disable-static )
+    ./configure \
+    --prefix=$TOOLS_DIR \
+    --disable-static \
+    --enable-shared )
 make -j$PARALLEL_JOBS -C $BUILD_DIR/genimage-10
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/genimage-10
 rm -rf $BUILD_DIR/genimage-10
@@ -275,19 +275,19 @@ rm -rf $BUILD_DIR/genimage-10
 step "[13/13] Grub 2.02"
 extract $SOURCES_DIR/grub-2.02.tar.xz $BUILD_DIR
 ( cd $BUILD_DIR/grub-2.02 && \
-CPP="gcc -E" \
-./configure \
---prefix=$TOOLS_DIR \
---disable-static \
---enable-shared \
---target=x86_64 \
---with-platform=efi \
---disable-grub-mkfont \
---enable-efiemu=no \
-ac_cv_lib_lzma_lzma_code=no \
---enable-device-mapper=no \
---enable-libzfs=no \
---disable-werror )
+    CPP="gcc -E" \
+    ./configure \
+    ac_cv_lib_lzma_lzma_code=no \
+    --prefix=$TOOLS_DIR \
+    --target=x86_64 \
+    --disable-grub-mkfont \
+    --disable-static \
+    --disable-werror \
+    --enable-device-mapper=no \
+    --enable-efiemu=no \
+    --enable-libzfs=no \
+    --enable-shared \
+    --with-platform=efi )
 make -j$PARALLEL_JOBS -C $BUILD_DIR/grub-2.02
 make -j$PARALLEL_JOBS install -C $BUILD_DIR/grub-2.02
 mkdir -pv $TOOLS_DIR/prebuilts/efi

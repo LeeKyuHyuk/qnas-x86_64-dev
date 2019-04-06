@@ -62,6 +62,9 @@ total_build_time=$(timer)
 rm -rf $BUILD_DIR $IMAGES_DIR/{uefi,boot.vfat,sdcard.img,$CONFIG_ISO_FILENAME}
 mkdir -pv $BUILD_DIR
 
+mkdir -pv $IMAGES_DIR/uefi/qnas/qnas-install
+echo "TEST File!" > $IMAGES_DIR/uefi/qnas/qnas-install/README
+
 step "[1/1] Create QNAS UEFI Image"
 mkdir -pv $IMAGES_DIR/uefi/EFI/BOOT
 cp $TOOLS_DIR/prebuilts/efi/bootx64.efi $IMAGES_DIR/uefi/EFI/BOOT

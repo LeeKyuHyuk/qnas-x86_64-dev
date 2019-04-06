@@ -80,12 +80,10 @@ check_tarballs
 total_build_time=$(timer)
 
 rm -rf $BUILD_DIR $IMAGES_DIR
-mkdir -pv $BUILD_DIR $IMAGES_DIR/isoimage/boot
+mkdir -pv $BUILD_DIR $IMAGES_DIR
 
 step "[1/2] Create Ramdisk Image"
 ( cd $ROOTFS_DIR && find . | cpio -o -H newc | gzip > $IMAGES_DIR/initramfs_data.cpio.gz )
-( cd $ROOTFS_DIR && find . | cpio -R root:root -H newc -o | gzip > $IMAGES_DIR/rootfs.gz )
-mv -v $IMAGES_DIR/rootfs.gz $IMAGES_DIR/isoimage/boot/rootfs.xz
 
 step "[2/2] Linux Kernel 4.20.12"
 extract $SOURCES_DIR/linux-4.20.12.tar.xz $BUILD_DIR
@@ -94,11 +92,15 @@ make -j$PARALLEL_JOBS ARCH=$CONFIG_LINUX_ARCH $CONFIG_LINUX_KERNEL_DEFCONFIG -C 
 # Step 1 - disable all active kernel compression options (should be only one).
 sed -i "s/.*CONFIG_DEFAULT_HOSTNAME.*/CONFIG_DEFAULT_HOSTNAME=\""$CONFIG_HOSTNAME"\"/" $BUILD_DIR/linux-4.20.12/.config
 # Enable overlay support, e.g. merge ro and rw directories (3.18+).
-# sed -i "s/.*CONFIG_OVERLAY_FS.*/CONFIG_OVERLAY_FS=y/" $BUILD_DIR/linux-4.20.12/.config
+sed -i "s/.*CONFIG_OVERLAY_FS.*/CONFIG_OVERLAY_FS=y/" $BUILD_DIR/linux-4.20.12/.config
 # Enable overlayfs redirection (4.10+).
-# echo "CONFIG_OVERLAY_FS_REDIRECT_DIR=y" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_OVERLAY_FS_REDIRECT_DIR=y" >> $BUILD_DIR/linux-4.20.12/.config
 # Turn on inodes index feature by default (4.13+).
-# echo "CONFIG_OVERLAY_FS_INDEX=y" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_OVERLAY_FS_INDEX=y" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW=n" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_OVERLAY_FS_NFS_EXPORT=n" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_OVERLAY_FS_XINO_AUTO=n" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_OVERLAY_FS_METACOPY=n" >> $BUILD_DIR/linux-4.20.12/.config
 # Step 1 - disable all active kernel compression options (should be only one).
 sed -i "s/.*\\(CONFIG_KERNEL_.*\\)=y/\\#\\ \\1 is not set/" $BUILD_DIR/linux-4.20.12/.config
 # Step 2 - enable the 'xz' compression option.

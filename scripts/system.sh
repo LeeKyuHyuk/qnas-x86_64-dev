@@ -120,13 +120,13 @@ ln -svf /tmp $ROOTFS_DIR/var/spool
 ln -svf /tmp $ROOTFS_DIR/var/tmp
 ln -svf /tmp $ROOTFS_DIR/var/lib/misc
 if [ "$CONFIG_LINUX_ARCH" = "i386" ] ; then \
-ln -snvf lib $ROOTFS_DIR/lib32 ; \
-ln -snvf lib $ROOTFS_DIR/usr/lib32 ; \
-fi;
+    ln -snvf lib $ROOTFS_DIR/lib32 ; \
+    ln -snvf lib $ROOTFS_DIR/usr/lib32 ; \
+  fi;
 if [ "$CONFIG_LINUX_ARCH" = "x86_64" ] ; then \
-ln -snvf lib $ROOTFS_DIR/lib64 ; \
-ln -snvf lib $ROOTFS_DIR/usr/lib64 ; \
-fi;
+    ln -snvf lib $ROOTFS_DIR/lib64 ; \
+    ln -snvf lib $ROOTFS_DIR/usr/lib64 ; \
+  fi;
 
 step "[2/2] Busybox 1.30.1"
 extract $SOURCES_DIR/busybox-1.30.1.tar.bz2 $BUILD_DIR
@@ -166,7 +166,10 @@ chmod -v 1777 $ROOTFS_DIR/tmp
 
 cat > $ROOTFS_DIR/etc/bootscript.sh << "EOF"
 #!/bin/sh
+echo -e "[QNAS] Welcome to \\e[1mQNAS \\e[32mInstall \\e[31mDisk\\e[0m!"
 dmesg -n 1
+
+echo "[QNAS] Mount /dev /proc /sys"
 mount -t devtmpfs none /dev
 mount -t proc none /proc
 mount -t sysfs none /sys
@@ -174,6 +177,28 @@ mount -t sysfs none /sys
 printf "Starting network: "
 /sbin/ifup -a &> /dev/null
 [ $? = 0 ] && echo "OK" || echo "FAIL"
+
+echo "[QNAS] Load QNAS install files."
+echo "[QANS] Searching available devices for overlay content."
+for DEVICE in /dev/* ; do
+  DEV=$(echo "${DEVICE##*/}")
+  SYSDEV=$(echo "/sys/class/block/$DEV")
+  case $DEV in
+    *loop*) continue ;;
+  esac
+  if [ ! -d "$SYSDEV" ] ; then
+    continue
+  fi
+  mkdir -p /tmp/mnt/device
+  DEVICE_MNT=/tmp/mnt/device
+  mount $DEVICE $DEVICE_MNT 2>/dev/null
+  if [ -d $DEVICE_MNT/qnas/qnas-install ] ; then
+    echo -e "[QANS] Device \\e[31m$DEVICE\\e[0m is mounted in read only mode."
+    rm -rf /qnas-install
+    ln -sf $DEVICE_MNT/qnas/qnas-install /
+    break
+  fi
+done
 
 EOF
 chmod +x $ROOTFS_DIR/etc/bootscript.sh
