@@ -83,7 +83,7 @@ rm -rf $BUILD_DIR $IMAGES_DIR
 mkdir -pv $BUILD_DIR $IMAGES_DIR
 
 step "[1/2] Create Ramdisk Image"
-( cd $ROOTFS_DIR && find . | cpio -o -H newc | gzip > $IMAGES_DIR/initramfs_data.cpio.gz )
+( cd $LIVE_ROOTFS_DIR && find . | cpio -o -H newc | gzip > $IMAGES_DIR/initramfs_data.cpio.gz )
 
 step "[2/2] Linux Kernel 4.20.12"
 extract $SOURCES_DIR/linux-4.20.12.tar.xz $BUILD_DIR
@@ -91,6 +91,16 @@ make -j$PARALLEL_JOBS ARCH=$CONFIG_LINUX_ARCH mrproper -C $BUILD_DIR/linux-4.20.
 make -j$PARALLEL_JOBS ARCH=$CONFIG_LINUX_ARCH $CONFIG_LINUX_KERNEL_DEFCONFIG -C $BUILD_DIR/linux-4.20.12
 # Step 1 - disable all active kernel compression options (should be only one).
 sed -i "s/.*CONFIG_DEFAULT_HOSTNAME.*/CONFIG_DEFAULT_HOSTNAME=\""$CONFIG_HOSTNAME"\"/" $BUILD_DIR/linux-4.20.12/.config
+# Enable overlay support, e.g. merge ro and rw directories (3.18+).
+sed -i "s/.*CONFIG_OVERLAY_FS.*/CONFIG_OVERLAY_FS=y/" $BUILD_DIR/linux-4.20.12/.config
+# Enable overlayfs redirection (4.10+).
+echo "CONFIG_OVERLAY_FS_REDIRECT_DIR=y" >> $BUILD_DIR/linux-4.20.12/.config
+# Turn on inodes index feature by default (4.13+).
+echo "CONFIG_OVERLAY_FS_INDEX=y" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW=n" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_OVERLAY_FS_NFS_EXPORT=n" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_OVERLAY_FS_XINO_AUTO=n" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_OVERLAY_FS_METACOPY=n" >> $BUILD_DIR/linux-4.20.12/.config
 # Step 1 - disable all active kernel compression options (should be only one).
 sed -i "s/.*\\(CONFIG_KERNEL_.*\\)=y/\\#\\ \\1 is not set/" $BUILD_DIR/linux-4.20.12/.config
 # Step 2 - enable the 'xz' compression option.
@@ -107,6 +117,9 @@ echo "CONFIG_RESET_ATTACK_MITIGATION=y" >> $BUILD_DIR/linux-4.20.12/.config
 echo "CONFIG_APPLE_PROPERTIES=n" >> $BUILD_DIR/linux-4.20.12/.config
 # Enable the mixed EFI mode when building 64-bit kernel.
 echo "CONFIG_EFI_MIXED=y" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_INITRAMFS_SOURCE=\"$IMAGES_DIR/initramfs_data.cpio.gz\"" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_INITRAMFS_ROOT_UID=0" >> $BUILD_DIR/linux-4.20.12/.config
+echo "CONFIG_INITRAMFS_ROOT_GID=0" >> $BUILD_DIR/linux-4.20.12/.config
 make -j$PARALLEL_JOBS ARCH=$CONFIG_LINUX_ARCH CROSS_COMPILE="$TOOLS_DIR/bin/$CONFIG_TARGET-" -C $BUILD_DIR/linux-4.20.12 bzImage
 cp $BUILD_DIR/linux-4.20.12/arch/x86/boot/bzImage $IMAGES_DIR/bzImage
 rm -rf $BUILD_DIR/linux-4.20.12

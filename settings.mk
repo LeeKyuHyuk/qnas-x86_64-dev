@@ -10,6 +10,7 @@ export BUILD_DIR := $(OUTPUT_DIR)/build
 export TOOLS_DIR := $(OUTPUT_DIR)/tools
 export SYSROOT_DIR := $(TOOLS_DIR)/$(CONFIG_TARGET)
 export ROOTFS_DIR := $(OUTPUT_DIR)/rootfs
+export LIVE_ROOTFS_DIR := $(OUTPUT_DIR)/live-rootfs
 export IMAGES_DIR := $(OUTPUT_DIR)/images
 export KERNEL_DIR := $(OUTPUT_DIR)/kernel
 export PATH := "$(TOOLS_DIR)/bin:$(TOOLS_DIR)/sbin:$(TOOLS_DIR)/usr/bin:$(TOOLS_DIR)/usr/sbin:$(PATH)"

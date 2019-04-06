@@ -1,12 +1,12 @@
 include settings.mk
 
-.PHONY: all toolchain system image clean
+.PHONY: all toolchain system kernel live-system live-kernel image clean
 
 help:
 	@$(SCRIPTS_DIR)/help.sh
 
 all:
-	@make clean toolchain system kernel image
+	@make clean toolchain system kernel live-system live-kernel image clean
 
 toolchain:
 	@$(SCRIPTS_DIR)/toolchain.sh
@@ -16,6 +16,12 @@ system:
 
 kernel:
 	@$(SCRIPTS_DIR)/kernel.sh
+
+live-system:
+	@$(SCRIPTS_DIR)/live-system.sh
+
+live-kernel:
+	@$(SCRIPTS_DIR)/live-kernel.sh
 
 image:
 	@$(SCRIPTS_DIR)/image.sh

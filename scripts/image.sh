@@ -62,6 +62,7 @@ total_build_time=$(timer)
 rm -rf $BUILD_DIR $IMAGES_DIR/{uefi,boot.vfat,sdcard.img,$CONFIG_ISO_FILENAME}
 mkdir -pv $BUILD_DIR
 
+step "Copy QNAS system image"
 mkdir -pv $IMAGES_DIR/uefi/qnas/qnas-install
 echo "TEST File!" > $IMAGES_DIR/uefi/qnas/qnas-install/README
 
@@ -81,7 +82,7 @@ bootx64.efi
 EOF
 cp -v $IMAGES_DIR/bzImage $IMAGES_DIR/uefi/bzImage
 $TOOLS_DIR/usr/bin/genimage \
-  --rootpath "$ROOTFS_DIR" \
+  --rootpath "$LIVE_ROOTFS_DIR" \
   --tmppath "$BUILD_DIR/genimage.tmp" \
   --inputpath "$IMAGES_DIR/uefi" \
   --outputpath "$IMAGES_DIR" \
